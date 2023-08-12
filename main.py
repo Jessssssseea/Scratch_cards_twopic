@@ -32,8 +32,8 @@ width = float(w * scale * 0.9)
 height = float(h * scale * 0.9)
 
 screen = pygame.display.set_mode((width, height))
-mask_image = pygame.image.load("background.jpg")
-image = pygame.image.load("scratch.jpg")
+mask_image = pygame.image.load("scratch.jpg")
+image = pygame.image.load("background.jpg")
 
 image = pygame.transform.scale(image, (width, height))
 mask_image = pygame.transform.scale(mask_image, (width, height))
