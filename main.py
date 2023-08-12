@@ -1,19 +1,42 @@
 import os
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"]="" # 隐藏 pygame 的欢迎信息
+
 import pygame
+from win32.win32api import GetSystemMetrics
+from PIL import Image
+import ctypes
+import sys
 
 # 初始化 Pygame
 pygame.init()
 pygame.display.set_caption('Scratch')
 
-# 创建屏幕和加载图片
-width, height = 816, 614.4
+# 获取图像尺寸
+img = Image.open('background.jpg')
+imgSize = img.size
+w = img.width
+h = img.height
+
+# 获取屏幕分辨率
+user32 = ctypes.windll.user32
+screen_width = user32.GetSystemMetrics(0)
+screen_height = user32.GetSystemMetrics(1)
+
+# 计算缩放比例
+scale_width = screen_width / w
+scale_height = screen_height / h
+scale = min(scale_width, scale_height)
+
+# 计算缩放后的图像尺寸
+width = float(w * scale * 0.9)
+height = float(h * scale * 0.9)
+
 screen = pygame.display.set_mode((width, height))
 mask_image = pygame.image.load("background.jpg")
 image = pygame.image.load("scratch.jpg")
 
 image = pygame.transform.scale(image, (width, height))
-mask_image = pygame.transform.scale(mask_image, image.get_size())
+mask_image = pygame.transform.scale(mask_image, (width, height))
 
 mask_surface = mask_image.convert_alpha()
 image_surface = image.convert_alpha()
@@ -24,7 +47,8 @@ result_surface = pygame.Surface(image.get_size(), flags=pygame.SRCALPHA)
 threshold = 0.7
 
 def main():
-    global mask_surface
+    global mask_surface, width, height, threshold, image_surface
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.MOUSEMOTION:
@@ -33,6 +57,7 @@ def main():
 
             if event.type == pygame.QUIT:
                 pygame.quit()
+                sys.exit()
                 return
 
         draw_surface = pygame.Surface(image.get_size(), flags=pygame.SRCALPHA)
@@ -49,9 +74,9 @@ def main():
         total_pixels = width * height
         transparency = transparent_pixels / total_pixels
         transparency2 = 1 - transparency
-        if transparency2 > threshold:
-            # 如果达到阈值，清除遮罩
-            mask_image = pygame.transform.scale(image, (816, 614.4))
+
+        if transparency2 > threshold:   # 如果达到阈值，清除遮罩
+            mask_image = pygame.transform.scale(image, (width, height))
             mask_surface = mask_image.convert_alpha()
 
         pygame.display.flip()
