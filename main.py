@@ -6,13 +6,14 @@ from win32.win32api import GetSystemMetrics
 from PIL import Image
 import ctypes
 import sys
+from tkinter import messagebox
 
 # 初始化 Pygame
 pygame.init()
-pygame.display.set_caption('Scratch')
+pygame.display.set_caption('刮刮乐')
 
 # 获取图像尺寸
-img = Image.open('background.jpg')
+img = Image.open('background.png')
 imgSize = img.size
 w = img.width
 h = img.height
@@ -28,12 +29,12 @@ scale_height = screen_height / h
 scale = min(scale_width, scale_height)
 
 # 计算缩放后的图像尺寸
-width = float(w * scale * 0.9)
-height = float(h * scale * 0.9)
+width = float(w * scale * 0.75)
+height = float(h * scale * 0.75)
 
 screen = pygame.display.set_mode((width, height))
-mask_image = pygame.image.load("scratch.jpg")
-image = pygame.image.load("background.jpg")
+mask_image = pygame.image.load("scratch.png")
+image = pygame.image.load("background.png")
 
 image = pygame.transform.scale(image, (width, height))
 mask_image = pygame.transform.scale(mask_image, (width, height))
